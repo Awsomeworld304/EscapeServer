@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_name TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    rooms TEXT NOT NULL,
+    status TEXT NOT NULL
+);
