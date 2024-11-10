@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import sqlite3
 from sqlite3 import Error
 
-import BufferedDB
+import FakeDB
 
 #import BufferedDB
 
@@ -27,8 +27,16 @@ ip = socket.gethostbyname(socket.gethostname())
 os.system("cls")
 
 # Simple DB
-db = BufferedDB.BufferedDB()
+#db = BufferedDB.BufferedDB()
 #db = TinyDB('db.json')
+db = FakeDB.FakeDB()
+
+def minimenu()->bool:
+    ye = input("Would you like to host the website? (y/N): ")
+    if ye.lower == "y": return True
+    return False
+
+hostSite = minimenu()
 
 class Server(http.server.BaseHTTPRequestHandler):
     file_to_open = ""
@@ -45,11 +53,17 @@ class Server(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/':
-            self.path = './static/index.html'
-            try: file_to_open = open(self.path).read(); self.send_response(200)
-            except: file_to_open = "File not found!"; self.send_response(404)
-            self.end_headers()
-            self.wfile.write(bytes(file_to_open, 'utf-8'))
+            if hostSite:
+                self.path = './static/index.html'
+                try: file_to_open = open(self.path).read(); self.send_response(200)
+                except: file_to_open = "File not found!"; self.send_response(404)
+                self.end_headers()
+                self.wfile.write(bytes(file_to_open, 'utf-8'))
+            else:
+                file_to_open = "Server is active!\nHowever, the dashboard is disabled."
+                self.end_headers()
+                self.send_response(200)
+                self.wfile.write(bytes(file_to_open, 'utf-8'))
         # Other file loading
         elif os.path.isfile(f'.{self.path}'):
             try: file_to_open = open(f'.{self.path}').read(); self.send_response(200)
@@ -67,20 +81,21 @@ class Server(http.server.BaseHTTPRequestHandler):
             self.wfile.write(b'Test of the server API.')
             pass
         # Gets list of whole DB.
-        elif self.path == '/getalldb':
-            file_to_open = "CHANGE ME TO DB"
+        elif self.path == '/getall':
+            file_to_open = db.get_all()
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
             self.wfile.write(bytes(file_to_open, 'utf-8'))
             pass
 
+        # /getvalue?tag=test
         elif self.path.__contains__("/getvalue?tag="):
             q = urlparse(self.path).query
             query_components = dict(qc.split("=") for qc in q.split("&"))
             tag = query_components["tag"]
             print(f"tag: {tag}")
-            file_to_open = db.get(tag)
+            file_to_open = db.get_from_tag(tag)
             #db.get(tag) if db.get(tag) != None else "null"
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
@@ -88,16 +103,14 @@ class Server(http.server.BaseHTTPRequestHandler):
             self.wfile.write(bytes(file_to_open, 'utf-8'))
             pass
 
+        # /setvalue?tag=test&value=test
         elif self.path.__contains__("/setvalue?tag=") and self.path.__contains__("&value="):
             q = urlparse(self.path).query
             query_components = dict(qc.split("=") for qc in q.split("&"))
             tag = query_components["tag"]
             val = query_components["value"]
             print(f"tag: {tag} value: {val}")
-            tv = {"tag": f"{tag}", "value": f"{val}"}
-            print(tv)
-            #db.insert(tv)
-            file_to_open = "File written successfully!"
+            file_to_open = db.set_from_tag(tag,val)
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
