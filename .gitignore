@@ -1,4 +1,4 @@
 # Pipenv
 Pipfile.lock
-_pycache_/*
+_pycache_
 master.key
