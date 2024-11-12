@@ -4,14 +4,14 @@ import os
 class FakeDB:
     db_path = './db.dat'
 
-    event_name:str = ""
-    event_type:str = ""
-    event_status:str = ""
+    event_name:str = "None"
+    event_type:str = "None"
+    event_status:str = "Inactive"
 
-    rooms = ""
+    rooms = "None"
 
-    start_date:str = ""
-    end_date:str = ""
+    start_date:str = "None"
+    end_date:str = "None"
     
     def __init__(self)->None:
         last_line = ""
