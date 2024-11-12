@@ -21,7 +21,7 @@ db_token = ""
 with open('./assets/master.key', 'r') as f: db_token = f.read()
 
 # Local IP obv, we are NOT about to have this on the web!!
-ip = socket.gethostbyname(socket.gethostname())
+ip:str = socket.gethostbyname(socket.gethostname())
 
 # Clear prev logs...
 os.system("cls")
@@ -29,17 +29,27 @@ os.system("cls")
 # Simple DB
 #db = BufferedDB.BufferedDB()
 #db = TinyDB('db.json')
-db = FakeDB.FakeDB()
+db:FakeDB = FakeDB.FakeDB()
+
+# Client ID List (ID is a four digit unique number.)
+ids:list = []
+latest_id:int = 0000
+
+def check_id(self, id)->bool:
+    for i in ids: 
+        if i == id: return False
+    ids.append(id)
+    return True
 
 def minimenu()->bool:
     ye = input("Would you like to host the website? (y/N): ")
     if ye.lower == "y": return True
     return False
 
-hostSite = minimenu()
+hostSite:bool = True
 
 class Server(http.server.BaseHTTPRequestHandler):
-    file_to_open = ""
+    file_to_open:str = ""
 
     def _set_headers(self):
         self.send_response(200)
@@ -80,6 +90,19 @@ class Server(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b'Test of the server API.')
             pass
+        # Checks for new update.
+        elif self.path == "/new?id=":
+            q = urlparse(self.path).query
+            query_components = dict(qc.split("=") for qc in q.split("&"))
+            id = query_components["id"]
+            check_id(id)
+
+            file_to_open = ""
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(bytes(file_to_open, 'utf-8'))
+            pass
         # Gets list of whole DB.
         elif self.path == '/getall':
             file_to_open = db.get_all()
@@ -96,6 +119,12 @@ class Server(http.server.BaseHTTPRequestHandler):
             tag = query_components["tag"]
             print(f"tag: {tag}")
             file_to_open = db.get_from_tag(tag)
+            if file_to_open == "":
+                file_to_open = "Invalid tag!"
+                self.send_response(404)
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(bytes(file_to_open, 'utf-8'))
             #db.get(tag) if db.get(tag) != None else "null"
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
@@ -152,7 +181,6 @@ class Server(http.server.BaseHTTPRequestHandler):
         pass
 
 def init():
-    #print(f'DB Server at http://{ip}:8081')
     print(f'Web Server at: http://{ip}:8080')
     httpd = http.server.ThreadingHTTPServer((ip,8080),Server)
     httpd.serve_forever()
