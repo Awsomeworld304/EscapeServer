@@ -2,6 +2,8 @@ import datetime
 import os
 
 class FakeDB:
+    db_path = './db.dat'
+
     event_name:str = ""
     event_type:str = ""
     event_status:str = ""
@@ -13,8 +15,7 @@ class FakeDB:
     
     def __init__(self)->None:
         last_line = ""
-        #log_file_handle = open("./db-log.dat", "r")
-        with open('./db.dat', 'rb') as f:
+        with open(self.db_path, 'rb') as f:
             try:  # catch OSError in case of a one line file 
                 f.seek(-2, os.SEEK_END)
                 while f.read(1) != b'\n':
@@ -33,8 +34,8 @@ class FakeDB:
         pass
     
     def update_logs(self)->None:
-        log_file_handle = open("./db-log.dat", "a")
-        line = datetime.datetime.now() + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms
+        log_file_handle = open(self.db_path, "a")
+        line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms
         print(line)
         log_file_handle.write(line)
         print("DB: Written to log.")
