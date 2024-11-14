@@ -38,8 +38,11 @@ other = ["Lobby", "Office", "Commons"]
 ids:list = []
 latest_id:int = 0000
 
+httpserver:http.server.ThreadingHTTPServer
+
 def on_exit():
     db.on_exit()
+    #httpserver.shutdown()
     print("Exiting gracefully.")
     pass
 
@@ -151,6 +154,13 @@ class Server(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(bytes(file_to_open, 'utf-8'))
             pass
+        elif self.path == "/resetevent":
+            db.reset()
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(bytes("Event cleared.", 'utf-8'))
+            pass 
 
         # /getvalue?tag=test
         elif self.path.__contains__("/getvalue?tag="):
@@ -158,7 +168,7 @@ class Server(http.server.BaseHTTPRequestHandler):
             query_components = dict(qc.split("=") for qc in q.split("&"))
             tag = query_components["tag"]
             file_to_open = db.get_from_tag(tag)
-            print(f"tag: {tag}, value: {file_to_open}")
+            if LOG_LEVEL == "INFO": print(f"tag: {tag}, value: {file_to_open}")
             if file_to_open == "Unknown tag.":
                 file_to_open = "Invalid tag!"
                 self.send_response(404)
@@ -172,14 +182,21 @@ class Server(http.server.BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(bytes(file_to_open, 'utf-8'))
             pass
-
+        # Get Event Types
+        elif self.path == "/alltypes":
+            file_to_open = "Fire,Shooting,Weather"
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+            self.wfile.write(bytes(file_to_open, 'utf-8'))
+            pass
         # /setvalue?tag=test&value=test
         elif self.path.__contains__("/setvalue?tag=") and self.path.__contains__("&value="):
             q = urlparse(self.path).query
             query_components = dict(qc.split("=") for qc in q.split("&"))
             tag = query_components["tag"]
             val = query_components["value"]
-            print(f"tag: {tag} value: {val}")
+            if LOG_LEVEL == "INFO": print(f"tag: {tag} value: {val}")
             file_to_open = db.set_from_tag(tag,val)
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
@@ -191,7 +208,7 @@ class Server(http.server.BaseHTTPRequestHandler):
         elif self.path.__contains__("/setvalue?event_name=") and self.path.__contains__("&event_type=") and self.path.__contains__("&event_status=") and self.path.__contains__("&start_date=")  and self.path.__contains__("&end_date=") and self.path.__contains__("&rooms="):
             q = urlparse(self.path).query
             query_components = dict(qc.split("=") for qc in q.split("&"))
-            print("Event Creation Request has been received.")
+            if LOG_LEVEL == "INFO": print("Event Creation Request has been received.")
             db.set_from_tag("event_name", query_components["event_name"])
             db.set_from_tag("event_type", query_components["event_type"])
             db.set_from_tag("event_status", query_components["event_status"])
@@ -227,7 +244,7 @@ class Server(http.server.BaseHTTPRequestHandler):
             if event_data["start_date"] != "": db.set_from_tag("start_date", event_data["start_date"])
             if event_data["end_date"] != "": db.set_from_tag("end_date", event_data["end_date"])
             if event_data["rooms"] != "": db.set_from_tag("rooms", event_data["rooms"])
-            print("Web Event gotten from Browser")
+            if LOG_LEVEL == "INFO": print("Web Event gotten from Browser")
             #print(db.get_all())
             self._set_headers('application/json')
             response = {'message': 'Event created successfully!'}
@@ -240,8 +257,9 @@ class Server(http.server.BaseHTTPRequestHandler):
 
 def init():
     print(f'Web Server at: http://{ip}:8080')
-    httpd = http.server.ThreadingHTTPServer((ip,8080),Server)
-    httpd.serve_forever()
+    # New Server
+    httpserver = http.server.ThreadingHTTPServer((ip,8080),Server)
+    httpserver.serve_forever()
     on_exit()
     pass
 

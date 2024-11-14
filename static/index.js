@@ -13,6 +13,8 @@ const predefinedRooms = [
     "Lobby", "Office", "Commons"
 ];
 
+const ip = "192.168.1.137"
+
 const roomPicker = document.getElementById('roomPicker');
 predefinedRooms.forEach(room => {
     const option = document.createElement('option');
@@ -23,7 +25,7 @@ predefinedRooms.forEach(room => {
 
 async function fetchEventInfo() {
     try {
-        const response = await fetch('http://10.0.0.153:8080/api/events');
+        const response = await fetch('http://' + ip + ':8080/api/events');
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -84,7 +86,7 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     };
 
     try {
-        const response = await fetch('http://10.0.0.153:8080/api/events', {
+        const response = await fetch('http://' + ip + ':8080/api/events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -99,6 +101,20 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     } catch (error) {
         console.error('Error submitting form:', error);
         document.getElementById('message').innerText = 'Error creating event.';
+    }
+});
+
+document.getElementById('resetButton').addEventListener('click', async function(event) {
+    event.preventDefault();
+    try {
+        await fetch('http://' + ip + ':8080/resetevent', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        });
+    } catch (error) {
+        console.error("Error resetting event: " + error)
     }
 });
 
