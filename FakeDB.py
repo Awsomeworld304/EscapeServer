@@ -4,14 +4,14 @@ import os
 class FakeDB:
     db_path = './db.dat'
 
-    event_name:str = "None"
-    event_type:str = "None"
+    event_name:str = "No Event"
+    event_type:str = "No Event"
     event_status:str = "Inactive"
 
-    rooms = "None"
+    rooms = "No Rooms"
 
-    start_date:str = "None"
-    end_date:str = "None"
+    start_date:str = "No Event"
+    end_date:str = "No Event"
     
     def __init__(self)->None:
         last_line = ""
@@ -23,19 +23,21 @@ class FakeDB:
             except OSError:
                 f.seek(0)
             self.last_line = f.readline().decode()
-        if ":" in last_line: data = last_line.split(":")[1].split(",")
-        else: data = [""]*6
-        self.event_name = data[0]
-        self.event_type = data[1]
-        self.event_status = data[2]
-        self.start_date = data[3]
-        self.end_date = data[4]
-        self.rooms = data[5]
+        """
+        if ":" in last_line: 
+            data = last_line.split(":")[1].split(",")
+            self.event_name = data[0]
+            self.event_type = data[1]
+            self.event_status = data[2]
+            self.start_date = data[3]
+            self.end_date = data[4]
+            self.rooms = data[5]
+        """
         pass
     
     def update_logs(self)->None:
         log_file_handle = open(self.db_path, "a")
-        line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms
+        line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms + "\n"
         print(line)
         log_file_handle.write(line)
         print("DB: Written to log.")
@@ -57,7 +59,7 @@ class FakeDB:
             case "start_date": return self.get_start_date()
             case "end_date": return self.get_end_date()
             case "rooms": return self.get_rooms()
-            case _: return ""
+            case _: return "Unknown tag."
 
     def set_name(self, event_name:str)->bool: 
         self.event_name = event_name
@@ -95,12 +97,12 @@ class FakeDB:
         return "Value written successfully."
     
     def reset(self)->None:
-        self.event_name = ""
-        self.event_type = ""
-        self.event_status = ""
-        self.start_date = ""
-        self.end_date = ""
-        self.rooms = ""
+        self.event_name = "No Event"
+        self.event_type = "No Event"
+        self.event_status = "Inactive"
+        self.start_date = "No Event"
+        self.end_date = "No Event"
+        self.rooms = "No Rooms"
         print("DB: The event has been reset.")
         self.update_logs()
         pass
