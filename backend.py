@@ -1,11 +1,9 @@
-import  sys,os
+import os
 import http.server
-import requests
 import socket
 import json
 from urllib.parse import urlparse
 import signal
-import time
 
 import FakeDB
 
@@ -40,14 +38,14 @@ other = ["Lobby", "Office", "Commons"]
 ids:list = []
 latest_id:int = 0000
 
-def exit():
+def on_exit():
     db.on_exit()
     print("Exiting gracefully.")
     pass
 
 def handle_interrupt(signal, frame):
     print("\nCtrl+C detected. Performing cleanup...")
-    exit()
+    on_exit()
     exit(0)
 signal.signal(signal.SIGINT, handle_interrupt)
 
@@ -244,7 +242,7 @@ def init():
     print(f'Web Server at: http://{ip}:8080')
     httpd = http.server.ThreadingHTTPServer((ip,8080),Server)
     httpd.serve_forever()
-    exit()
+    on_exit()
     pass
 
 try: init()
