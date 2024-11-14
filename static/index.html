@@ -12,10 +12,51 @@
         <h1>Escape Server - Web Panel</h1>
     </header>
     <main>
-        <p id="message">TBA</p>
+        <div class="container">
+            <div class="form">
+                <form id="eventForm">
+                    <h3 class="centertext">Create Event</h3>
+                    <label for="eventName">Event Name:</label>
+                    <input type="text" id="eventName" name="eventName" required><br>
+
+                    <label for="eventType">Event Type:</label>
+                    <input type="text" id="eventType" name="eventType" required><br>
+
+                    <label for="eventStatus">Event Status:</label>
+                    <select id="eventStatus" name="eventStatus" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select><br>
+
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required><br>
+
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required><br>
+
+                    <label for="rooms">Rooms:</label>
+                    <select id="roomPicker">
+                        <option value="All Rooms">All Rooms</option>
+                    </select>
+                    <button type="button" id="addRoomButton">Add Room</button><br>
+                    <ul id="roomList"></ul>
+
+                    <button type="submit" class="button">Submit</button>
+                    <p id="message"></p>
+                </form>
+            </div>
+            <div class="form current-event">
+                <h3 class="centertext">Current Event Information</h3>
+                <div id="eventInfo" class="event-info-container">
+                    <!-- Event information dynamically created here. -->
+                </div>
+                <button type="button" id="refreshButton">Refresh</button>
+            </div>
+        </div>
     </main>
     <footer>
-        <p>&copy; 2024 JamesTech</p>
+        <p>&copy; 2024 JamesTech & Room 09 Studio</p>
     </footer>
+    <script src="/static/index.js"></script> 
 </body>
 </html>
