@@ -1,4 +1,10 @@
 # Pipenv
 Pipfile.lock
 __pycache__
+
+# DB Things
 master.key
+db.dat
+
+# Logs
+server.log
