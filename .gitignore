@@ -4,7 +4,7 @@ __pycache__
 
 # DB Things
 master.key
-/db.dat
+db.dat
 
 # Logs
 server.log
