@@ -35,12 +35,20 @@ class FakeDB:
         """
         pass
     
-    def update_logs(self)->None:
+    def update_logs(self, init:bool=False)->None:
         log_file_handle = open(self.db_path, "a")
+        if init == "": log_file_handle.write("---SESSION START---")
         line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms + "\n"
         print(line)
         log_file_handle.write(line)
+        log_file_handle.close()
         print("DB: Written to log.")
+        pass
+    
+    def on_exit(self):
+        log_file_handle = open(self.db_path, "a")
+        log_file_handle.write("---SESSION END---")
+        log_file_handle.close()
         pass
 
     def get_tags()->str: return "event_name,event_type,event_status,start_date,end_date,rooms"
