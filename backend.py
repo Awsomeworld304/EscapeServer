@@ -4,6 +4,8 @@ import requests
 import socket
 import json
 from urllib.parse import urlparse
+import signal
+import time
 
 import FakeDB
 
@@ -37,6 +39,17 @@ other = ["Lobby", "Office", "Commons"]
 # Client ID List (ID is a four digit unique number.)
 ids:list = []
 latest_id:int = 0000
+
+def exit():
+    db.on_exit()
+    print("Exiting gracefully.")
+    pass
+
+def handle_interrupt(signal, frame):
+    print("\nCtrl+C detected. Performing cleanup...")
+    exit()
+    exit(0)
+signal.signal(signal.SIGINT, handle_interrupt)
 
 def check_id(self, id)->bool:
     for i in ids: 
@@ -196,10 +209,9 @@ class Server(http.server.BaseHTTPRequestHandler):
         
         #* Unknown Route
         else:
-            file_to_open = "Unknown call: " + self.path
-            print(file_to_open)
-            self.send_response(404)
-            self.send_header("Content-type", "text/plain")
+            self.path = './templates/404.html'
+            try: file_to_open = open(self.path).read(); self.send_response(200)
+            except: file_to_open = "File not found!"; self.send_response(404)
             self.end_headers()
             self.wfile.write(bytes(file_to_open, 'utf-8'))
             pass
@@ -232,6 +244,8 @@ def init():
     print(f'Web Server at: http://{ip}:8080')
     httpd = http.server.ThreadingHTTPServer((ip,8080),Server)
     httpd.serve_forever()
+    exit()
     pass
 
-init()
+try: init()
+except KeyboardInterrupt: print("\nCtrl+C detected. Exiting.")
