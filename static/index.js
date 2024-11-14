@@ -29,13 +29,15 @@ async function fetchEventInfo() {
         }
         const data = await response.json();
         const eventInfoDiv = document.getElementById('eventInfo');
+        const roomsList = data.rooms.split(',').map(room => `<li>${room.trim()}</li>`).join('');
         eventInfoDiv.innerHTML = `
             <p><strong>Event Name:</strong> ${data.event_name}</p>
             <p><strong>Event Type:</strong> ${data.event_type}</p>
             <p><strong>Event Status:</strong> ${data.event_status}</p>
             <p><strong>Start Date:</strong> ${data.start_date}</p>
             <p><strong>End Date:</strong> ${data.end_date}</p>
-            <p><strong>Rooms:</strong> ${data.rooms}</p>
+            <p><strong>Rooms:</strong></p>
+            <ul>${roomsList}</ul>
         `;
     } catch (error) {
         console.error('Error fetching event info:', error);
@@ -56,7 +58,6 @@ document.getElementById('addRoomButton').addEventListener('click', function() {
             }
         });
     } else {
-        // Check if the room is already in the list
         if ([...roomList.children].some(li => li.textContent === selectedRoom)) {
             alert('Room already added.');
             return;
@@ -71,7 +72,7 @@ document.getElementById('addRoomButton').addEventListener('click', function() {
 document.getElementById('eventForm').addEventListener('submit', async function(event) {
     event.preventDefault();
     const roomList = document.getElementById('roomList');
-    const rooms = [...roomList.children].join(","); // .map(li => li.textContent);
+    const rooms = [...roomList.children].map(li => li.textContent).join(',');
 
     const formData = {
         event_name: document.getElementById('eventName').value,
@@ -85,16 +86,20 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
     try {
         const response = await fetch('http://10.0.0.153:8080/api/events', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(formData)
         });
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         document.getElementById('message').innerText = 'Event created successfully!';
     } catch (error) {
         console.error('Error submitting form:', error);
         document.getElementById('message').innerText = 'Error creating event.';
-    } finally { fetchEventInfo(); }
+    }
 });
 
 document.getElementById('refreshButton').addEventListener('click', fetchEventInfo);

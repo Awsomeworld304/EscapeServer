@@ -83,11 +83,11 @@ class FakeDB:
         self.update_logs()
         return True
     def set_start_date(self, start_date:str=datetime.datetime.now())->bool: 
-        self.event_status = start_date
+        self.start_date = start_date
         self.update_logs()
         return True
     def set_end_date(self, end_date:str=datetime.datetime.now())->bool: 
-        self.event_status = end_date
+        self.end_date = end_date
         self.update_logs()
         return True
     def set_rooms(self, rooms:str="")->bool: 
