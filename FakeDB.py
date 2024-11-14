@@ -33,11 +33,12 @@ class FakeDB:
             self.end_date = data[4]
             self.rooms = data[5]
         """
+        self.update_logs(True)
         pass
     
     def update_logs(self, init:bool=False)->None:
         log_file_handle = open(self.db_path, "a")
-        if init == "": log_file_handle.write("---SESSION START---")
+        if init == True: log_file_handle.write("---SESSION START---\n"); return
         line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms + "\n"
         print(line)
         log_file_handle.write(line)
@@ -47,7 +48,7 @@ class FakeDB:
     
     def on_exit(self):
         log_file_handle = open(self.db_path, "a")
-        log_file_handle.write("---SESSION END---")
+        log_file_handle.write("---SESSION END---\n")
         log_file_handle.close()
         pass
 
