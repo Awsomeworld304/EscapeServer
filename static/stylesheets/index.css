@@ -142,6 +142,10 @@ button {
 }
 
 @media (max-width: 600px) {
+    header {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
     div.form {
         padding: 10px;
     }
