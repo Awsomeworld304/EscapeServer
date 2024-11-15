@@ -13,7 +13,8 @@ const predefinedRooms = [
     "Lobby", "Office", "Commons"
 ];
 
-const ip = "192.168.1.137"
+//const ip = "192.168.1.137"
+const ip = "10.0.0.153"
 
 const roomPicker = document.getElementById('roomPicker');
 predefinedRooms.forEach(room => {
@@ -84,6 +85,13 @@ document.getElementById('eventForm').addEventListener('submit', async function(e
         end_date: document.getElementById('endDate').value,
         rooms: rooms
     };
+
+    // Sanity check.
+    const currentDate = new Date();
+    const endDate = new Date(formData.end_date);
+    if (endDate < currentDate) {
+        formData.event_status = 'Inactive';
+    }
 
     try {
         const response = await fetch('http://' + ip + ':8080/api/events', {

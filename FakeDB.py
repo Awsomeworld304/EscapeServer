@@ -2,6 +2,7 @@ import datetime
 import os
 
 class FakeDB:
+    LOG_LEVEL = "ERROR"
     db_path = './db.dat'
 
     event_name:str = "No Event"
@@ -12,8 +13,16 @@ class FakeDB:
 
     start_date:str = "No Event"
     end_date:str = "No Event"
+
+    event_types:dict = {
+        'Fire': '',
+        'Shooting': '',
+        'Weather': '',
+        'Flood': ''
+        }
     
-    def __init__(self)->None:
+    def __init__(self, LOG_LVL:str="ERROR")->None:
+        self.LOG_LEVEL = LOG_LVL
         last_line = ""
         with open(self.db_path, 'rb') as f:
             try:  # catch OSError in case of a one line file 
@@ -40,10 +49,9 @@ class FakeDB:
         log_file_handle = open(self.db_path, "a")
         if init == True: log_file_handle.write("---SESSION START---\n"); return
         line = str(datetime.datetime.now()) + ":" + self.event_name + "," + self.event_type + "," + self.event_status + "," + self.start_date + "," + self.end_date + "," + self.rooms + "\n"
-        print(line)
         log_file_handle.write(line)
         log_file_handle.close()
-        print("DB: Written to log.")
+        if self.LOG_LEVEL == "INFO": print("DB: Written to log: " + line)
         pass
     
     def on_exit(self):
@@ -104,6 +112,13 @@ class FakeDB:
             case "rooms": self.set_rooms(value)
             case _: return "Unknown tag."
         return "Value written successfully."
+    
+    def add_event_type(self, type:str, msg:str):
+        self.event_types.update({type: msg})
+        pass
+    def del_event_type(self, type:str):
+        del self.event_types[type]
+        pass
     
     def reset(self)->None:
         self.event_name = "No Event"

@@ -28,7 +28,7 @@ ip = socket.gethostbyname(socket.gethostname())
 os.system("cls")
 
 # Simple DB
-db = FakeDB.FakeDB()
+db = FakeDB.FakeDB(LOG_LEVEL)
 awing = ["1A - CTE Math", "1AA - Direct Care Worker", "2A - Option Pathway", "3A - Success Lab", "4A - Practical Nursing", "5A - Practical Nursing", "6A - Pre-Engineering / PLTW", "7A - HVAC", "8A - Electrical", "9A - Certified Patient Care Technician", "10A - Dental Assisting/Clinic", "11A - Masonry", "A Wing Hallway"]
 bwing = ["1B - Cafeteria", "2B - ProStart", "3B - ProStart", "3BB - Masonry", "4B - Misc.", "4BB - SkillsUSA", "5B - Carpentry", "6B - Welding", "8B - Carpentry Shop", "9B - Automotive", "10B - Welding Shop", "11B - Collision Repair", "12B - Collision Repair Shop", "13B - Cybersecurity", "14B - CTE English", "B Wing Hallway"]
 cwing = ["1C - Option Pathway", "2C - Law and Public Safety", "3C - Plumbing", "4C - Diesel Technology", "4CC - Diesel Technology Shop", "5C - Emergency and Firefighting Management Services", "6C - Graphic Design / Multimedia Publishing", "7C - Medical Assisting", "C Wing Hallway"]
