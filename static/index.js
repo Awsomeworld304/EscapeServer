@@ -13,8 +13,10 @@ const predefinedRooms = [
     "Lobby", "Office", "Commons"
 ];
 
-//const ip = "192.168.1.137"
-const ip = "10.0.0.153"
+// Live Demo IP
+const ip = "192.168.1.137"
+// Testing IP
+//const ip = "10.0.0.153"
 
 const roomPicker = document.getElementById('roomPicker');
 predefinedRooms.forEach(room => {
