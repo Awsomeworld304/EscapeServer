@@ -1,11 +1,14 @@
 # EscapeServer
+![80% Complete](https://progress-bar.xyz/80)\
 The Python server backend to the MIT App Inventor App final project.
 
 ## Features
 Custom database design.\
 Custom API.
 
-## Scrapped Features
-#### Server Web Panel
-I ran out of time to make this in the project time limit.\
-However, I might return to this and make a standalone webapp.
+## TODO
+- [x] Webpage.
+- [x] Custom database.
+- [x] Queries, POST, and GET used.
+- [x] Custom event types.
+- [ ] Chat feature.
