@@ -22,7 +22,7 @@ db_token = ""
 with open('./assets/master.key', 'r') as f: db_token = f.read()
 
 # Local IP obv, we are NOT about to have this on the web!!
-ip = socket.gethostbyname(socket.gethostname())
+ip = "192.168.1.137" # socket.gethostbyname(socket.gethostname())
 
 # Clear prev logs...
 os.system("cls")
